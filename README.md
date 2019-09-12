@@ -52,3 +52,23 @@ Such automated genre extracting system will also help to build better recommenda
 We would first import the dataset into a pandas data frame. The data can be downloaded from [here](https://www.kaggle.com/cryptexcode/mpst-movie-plot-synopses-with-tags). Below is how dataset looks like in raw form:
 
 ![MPST Data](https://raw.githubusercontent.com/anandborad/MPST/master/images/MPST%20data.png)
+
+## 1. Understanding the dataset
+
+From the above dataset, let's take a close look at different columns:
+
+1. imdb_id: Internet Movie Database (IMDb) is the most popular and authoritative source to learn about movie or TV series. For every digital content, IMDb generates a unique identifier which is accepted all around the internet. Here, imdb_id is a unique identifier and should be unique for each datapoint. If there are duplicate imdb_id, that simply means we do have duplicates data-points in our data and we need to remove those.
+
+2. title: the title of the movie
+3. Plot_synopsis: Plot synopsis is the narrative explanation of a movie plot means a summary of a screenplay. It introduced a lead character and what it does in a movie. Below is the plot synopsis for the movie ‘Hansel and Gretel’ (imdb_id: tt1380833):
+
+```
+‘Hansel and Gretel are the young children of a poor woodcutter. When a great famine settles over the land, the woodcutter\'s second, abusive wife decides to take the children into the woods and leave them there to fend for themselves, so that she and her husband do not starve to death, because the kids eat too much. The woodcutter opposes the plan but finally, and reluctantly, submits to his wife\'s scheme. They were unaware that in the children\'s bedroom, Hansel and Gretel......’
+```
+
+4. split: this column defines whether a data-points belongs to a train, test or validation set.
+
+5. synopsis_source: It gives information about the synopsis source, either IMDb or Wikipedia.
+
+6. tags: Tags are labelled genres for a movie. It may take multiple values for a single movie. This will be our prediction labels.
+If we take a closure look, a single tag may have space or a ‘-’. We want our tags to be similar form and thus we will replace whitespace and a dash with an underscore (‘_’). Also, we will separate tags by space instead of the comma. Below is how it looks:
