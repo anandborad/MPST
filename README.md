@@ -72,3 +72,37 @@ From the above dataset, let's take a close look at different columns:
 
 6. tags: Tags are labelled genres for a movie. It may take multiple values for a single movie. This will be our prediction labels.
 If we take a closure look, a single tag may have space or a ‘-’. We want our tags to be similar form and thus we will replace whitespace and a dash with an underscore (‘_’). Also, we will separate tags by space instead of the comma. Below is how it looks:
+
+![processsed tags](https://github.com/anandborad/MPST/blob/master/images/2_MPST_ptags.png)
+
+## 2. Check for missing and duplicate data
+
+Fortunately, there is no missing text in any of the columns but there is for sure, duplicate data in the dataset. 
+
+As discussed earlier, if an ‘imdb_id’ column has duplicate, then data must be duplicate. But here, there are few data-points where ‘imdb_id’ is different but the content for ‘title’, ‘plot_synopsis’, and ‘synopsis_source’ are same. Take a look at below image:
+
+![duplicate](https://github.com/anandborad/MPST/blob/master/images/3_MPST_duplicates.png)
+
+We will be removing such duplicate points with below code:
+
+```python
+data= mpst_df.drop_duplicates(['title','plot_synopsis', 'ptags'])
+```
+
+Above code will remove all duplicate rows which have same 'title','plot_synopsis', and 'ptags' excluding the first record.
+
+## 3. Exploring data
+
+### 3.1 Tags per movie
+
+As discussed earlier, a movie may consist of more than one genre and this will be interesting information to look into.
+
+```python
+# tags_count is an array containing number of tags for each movie
+sns.countplot(tags_count)
+plt.title("Number of tags in the synopsis ")
+plt.xlabel("Number of Tags")
+plt.ylabel("Number of synopsis")
+plt.show()
+```
+![No_of_tags](https://github.com/anandborad/MPST/blob/master/images/4_Tag_Analysis_no_of_tags.png)
