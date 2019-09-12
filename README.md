@@ -115,7 +115,7 @@ plt.show()
 ![wordcloud](https://raw.githubusercontent.com/anandborad/MPST/master/images/7_MPST_wordclod.png)
 Here we can see words like murder, police, attempts, charged, etc do have a connection with a tag murder semantically.
 We can do such analysis for all the tags but as we require to cover a lot of other stuff, it won’t be a good idea to increase a length of a blog including all those tag analysis.
-4. Text preprocessing
+## 4. Text preprocessing
 
 Text in a raw format does have things like HTML tags, special characters, etc, which need to be removed before using text to build a machine learning model. Below is the procedure I used for text processing.
 
@@ -143,3 +143,68 @@ def text_preprocess(syn_text):
  syn_processed=' '.join(str(stemmer.stem(j)) for j in words if j not in stop_words and len(j)!=1) #Removing stopwords and joining into sentence
 return syn_processed
 ```
+## 5. Train, validation, and test split
+
+This is fairly simple as splitting strategy is already mentioned in the dataset itself.
+
+```python
+train = data[data['split']=='train']
+val = data[data['split']=='val']
+test = data[data['split']=='test']
+```
+## 6. Featurization of text
+
+We can use multiple text featurization techniques such as a bag of words with n-grams, TFIDF with n-grams, Word2vec (average and weighted), Sentic Phrase, TextBlob, LDA topic Modelling, NLP/Text-based Features, etc.
+[An additional resource to learn about text featurization](https://towardsdatascience.com/understanding-feature-engineering-part-3-traditional-methods-for-text-data-f6f7d70acd41) 
+
+For simplicity, I have used TFIDF with 1,2,3-grams featurization which gives pretty good result in fact.
+
+```python
+vectorizer = TfidfVectorizer(min_df=0.00009, smooth_idf=True, tokenizer = lambda x: x.split(), sublinear_tf=False, ngram_range=(1,3))
+x_train = vectorizer.fit_transform(train['processed_plot'])
+x_val = vectorizer.transform(val['processed_plot'])
+x_test = vectorizer.transform(test['processed_plot'])
+```
+TFIDF with (1,3) grams generated few less than 7 million features. Below 2 resources will help you to learn more about TFIDF: 
+- [https://scikit-learn.org/stable/modules/generated/sklearn.feature_extraction.text.TfidfVectorizer.html](https://scikit-learn.org/stable/modules/generated/sklearn.feature_extraction.text.TfidfVectorizer.html)
+- [https://www.onely.com/blog/what-is-tf-idf/](https://www.onely.com/blog/what-is-tf-idf/)
+
+## 7. Machine learning modelling
+
+Before jumping to modelling, let's discuss the evaluation metrics. Choosing an evaluation metrics is the most essential task as its a bit tricky depending on task objective.
+
+Our problem is a multi-label classification problem where there may be multiple labels for a single data-point. We want our model to predict the right categories as much as it can while avoiding the wrong prediction. The accuracy is not a so good metric for this task. For this task, micro averaged F1 score is the better metric.
+
+### Micro averaged F1 score:
+
+F1-Score is derived from recall and precision values. To calculate micro f1 score, we need to calculate micro averaged precision and recall, hence:
+
+Micro F1-score = 2/(micro recall ^-1 + micro precision^-1)
+
+Let’s understand how to calculate micro averaged precision and recall from an example. let’s say for a set of data, the system's
+
+True positive (TP1)= 12
+False positive (FP1)=9
+False negative (FN1)=3
+
+Then precision (P1) and recall (R1) will be 57.14 and 80
+
+and for a different set of data, the system's
+
+
+True positive (TP2)= 50
+False positive (FP2)=23
+False negative (FN2)=9
+
+Then precision (P2) and recall (R2) will be 68.49 and 84.75
+
+Now, the average precision and recall of the system using the Micro-average method is
+
+Micro-average of precision = (TP1+TP2)/(TP1+TP2+FP1+FP2) = (12+50)/(12+50+9+23) = 65.96
+Micro-average of recall = (TP1+TP2)/(TP1+TP2+FN1+FN2) = (12+50)/(12+50+3+9) = 83.78
+
+Above explanation is borrowed from this brilliant blog.
+
+One more thing before jumping to modelling.
+
+Let's look into a research paper by dataset publisher which I have already mentioned (a link to paper) in the beginning. They used a micro F1 score along with tag recall and tag learned as evaluation metrics. Below is the snap of their result:
