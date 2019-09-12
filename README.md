@@ -106,3 +106,49 @@ plt.ylabel("Number of synopsis")
 plt.show()
 ```
 ![No_of_tags](https://github.com/anandborad/MPST/blob/master/images/4_Tag_Analysis_no_of_tags.png)
+
+There are 5516 movies which contain only one genre and 1 movie which is labelled for 25 tags.
+
+### 3.2 Tags frequency analysis
+
+It will be a good idea to analyse tag frequencies to know about frequent and rare tags. Here we can conclude that "murder" is the most frequent tag (5782 occurrences) while "christian film" is the least frequent tag (42 occurrences).
+```python
+sorted_freq_df=freq_df.sort_values(0, ascending=False)
+sorted_freq_df.head(-1).plot(kind='bar', figsize=(16,7), legend=False)
+i=np.arange(71)
+plt.title('Frequency of all tags')
+plt.xlabel('Tags')
+plt.ylabel('Counts')
+plt.show()
+```
+![tag_frequency](https://github.com/anandborad/MPST/blob/master/images/5_Tag_Analysis_All.png)
+
+If we consider only the top 20 tags, below is how it looks like:
+
+![tag_freq_top20](https://github.com/anandborad/MPST/blob/master/images/6_Tag_Analysis_20.png)
+
+### 3.3 WordCloud for tags
+
+Creating a word cloud of a plot synopsis text for a particular tag will help us to understand about the most frequent words for that tag. We will create a word cloud for a murder tag.
+
+```python
+# Creating column to indicate whether a murder tag exists or nor for a movie
+data['ptags_murder']= [1 if 'murder' in tgs.split() else 0 for tgs in data.ptags]
+
+# creating a corpus for movies with murder tag
+murder_word_cloud=''
+for plot in data[data['ptags_murder']==1].plot_synopsis:
+  murder_word_cloud = plot + ' '
+  
+from wordcloud import WordCloud
+
+#building a wordcloud
+wordcloud = WordCloud(width=800, height=800, collocations=False, 
+                     background_color='white').generate(murder_word_cloud)
+
+plt.figure(figsize=(10,10))
+plt.imshow(wordcloud)
+plt.title("Words in plot for murder tag")
+plt.axis("off")
+plt.show()
+```
