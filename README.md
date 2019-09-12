@@ -108,7 +108,38 @@ wordcloud = WordCloud(width=800, height=800, collocations=False,
 
 plt.figure(figsize=(10,10))
 plt.imshow(wordcloud)
-plt.title("Words in plot for murder tag")
+plt.title("Words in plots for movies with murder tag")
 plt.axis("off")
 plt.show()
+```
+![wordcloud](https://raw.githubusercontent.com/anandborad/MPST/master/images/7_MPST_wordclod.png)
+Here we can see words like murder, police, attempts, charged, etc do have a connection with a tag murder semantically.
+We can do such analysis for all the tags but as we require to cover a lot of other stuff, it won’t be a good idea to increase a length of a blog including all those tag analysis.
+4. Text preprocessing
+
+Text in a raw format does have things like HTML tags, special characters, etc, which need to be removed before using text to build a machine learning model. Below is the procedure I used for text processing.
+
+1. Removing HTML tags
+2. Removing special characters like #, _ , -, etc
+3. Converting text to lower case
+4. Removing stop words
+5. Stemming operation
+
+```python
+# function to remove html tags
+def striphtml(data):
+ cleanr = re.compile('<.*?>')
+ cleantext = re.sub(cleanr, ' ', str(data))
+ return cleantext
+stop_words = set(stopwords.words('english'))
+stemmer = SnowballStemmer("english")
+
+# function to pre-process the text
+def text_preprocess(syn_text):
+ syn_processed = striphtml(syn_text.encode('utf-8')) # html tags removed
+ syn_processed=re.sub(r'[^A-Za-z]+',' ',syn_processed) # removing special characters
+ words=word_tokenize(str(syn_processed.lower())) # device into words and convert into lower
+
+ syn_processed=' '.join(str(stemmer.stem(j)) for j in words if j not in stop_words and len(j)!=1) #Removing stopwords and joining into sentence
+return syn_processed
 ```
