@@ -1,3 +1,4 @@
 theme: jekyll-theme-cayman
 title: [Movie Plot Synopsis with Tags]
 description: [Extracting Movie Tags from a Plot Synopsis]
+show_downloads: False
