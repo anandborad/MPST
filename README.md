@@ -33,7 +33,7 @@ From the above dataset, let's take a close look at different columns:
 6. tags: Tags are labelled genres for a movie. It may take multiple values for a single movie. This will be our prediction labels.
 If we take a closure look, a single tag may have space or a ‘-’. We want our tags to be similar form and thus we will replace whitespace and a dash with an underscore (‘_’). Also, we will separate tags by space instead of the comma. Below is how it looks:
 
-![processsed tags](https://github.com/anandborad/MPST/blob/master/images/2_MPST_ptags.png)
+![processsed tags](https://raw.githubusercontent.com/anandborad/MPST/master/images/2_MPST_ptags.png)
 
 ## 2. Check for missing and duplicate data
 
@@ -41,7 +41,7 @@ Fortunately, there is no missing text in any of the columns but there is for sur
 
 As discussed earlier, if an ‘imdb_id’ column has duplicate, then data must be duplicate. But here, there are few data-points where ‘imdb_id’ is different but the content for ‘title’, ‘plot_synopsis’, and ‘synopsis_source’ are same. Take a look at below image:
 
-![duplicate](https://github.com/anandborad/MPST/blob/master/images/3_MPST_duplicates.png)
+![duplicate](https://raw.githubusercontent.com/anandborad/MPST/master/images/3_MPST_duplicates.png)
 
 We will be removing such duplicate points with below code:
 
@@ -65,7 +65,7 @@ plt.xlabel("Number of Tags")
 plt.ylabel("Number of synopsis")
 plt.show()
 ```
-![No_of_tags](https://github.com/anandborad/MPST/blob/master/images/4_Tag_Analysis_no_of_tags.png)
+![No_of_tags](https://raw.githubusercontent.com/anandborad/MPST/master/images/4_Tag_Analysis_no_of_tags.png)
 
 There are 5516 movies which contain only one genre and 1 movie which is labelled for 25 tags.
 
@@ -81,11 +81,11 @@ plt.xlabel('Tags')
 plt.ylabel('Counts')
 plt.show()
 ```
-![tag_frequency](https://github.com/anandborad/MPST/blob/master/images/5_Tag_Analysis_All.png)
+![tag_frequency](https://raw.githubusercontent.com/anandborad/MPST/master/images/5_Tag_Analysis_All.png)
 
 If we consider only the top 20 tags, below is how it looks like:
 
-![tag_freq_top20](https://github.com/anandborad/MPST/blob/master/images/6_Tag_Analysis_20.png)
+![tag_freq_top20](https://raw.githubusercontent.com/anandborad/MPST/master/images/6_Tag_Analysis_20.png)
 
 ### 3.3 WordCloud for tags
 
