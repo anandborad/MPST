@@ -113,6 +113,7 @@ plt.axis("off")
 plt.show()
 ```
 ![wordcloud](https://raw.githubusercontent.com/anandborad/MPST/master/images/7_MPST_wordclod.png)
+
 Here we can see words like murder, police, attempts, charged, etc do have a connection with a tag murder semantically.
 We can do such analysis for all the tags but as we require to cover a lot of other stuff, it won’t be a good idea to increase a length of a blog including all those tag analysis.
 ## 4. Text preprocessing
@@ -155,6 +156,7 @@ test = data[data['split']=='test']
 ## 6. Featurization of text
 
 We can use multiple text featurization techniques such as a bag of words with n-grams, TFIDF with n-grams, Word2vec (average and weighted), Sentic Phrase, TextBlob, LDA topic Modelling, NLP/Text-based Features, etc.
+
 [An additional resource to learn about text featurization](https://towardsdatascience.com/understanding-feature-engineering-part-3-traditional-methods-for-text-data-f6f7d70acd41) 
 
 For simplicity, I have used TFIDF with 1,2,3-grams featurization which gives pretty good result in fact.
@@ -165,6 +167,7 @@ x_train = vectorizer.fit_transform(train['processed_plot'])
 x_val = vectorizer.transform(val['processed_plot'])
 x_test = vectorizer.transform(test['processed_plot'])
 ```
+
 TFIDF with (1,3) grams generated few less than 7 million features. Below 2 resources will help you to learn more about TFIDF: 
 - [https://scikit-learn.org/stable/modules/generated/sklearn.feature_extraction.text.TfidfVectorizer.html](https://scikit-learn.org/stable/modules/generated/sklearn.feature_extraction.text.TfidfVectorizer.html)
 - [https://www.onely.com/blog/what-is-tf-idf/](https://www.onely.com/blog/what-is-tf-idf/)
@@ -208,11 +211,11 @@ Micro-average of recall = (TP1+TP2)/(TP1+TP2+FN1+FN2) = (12+50)/(12+50+3+9) = 83
 ```
 Above explanation is borrowed from this [brilliant blog](http://rushdishams.blogspot.com/2011/08/micro-and-macro-average-of-precision.html).
 
-One more thing before jumping to modelling.
+*One more thing before jumping to modelling.*
 
 Let's look into a research paper by dataset publisher which I have already mentioned (a link to paper) in the beginning. They used a micro F1 score along with tag recall and tag learned as evaluation metrics. Below is the snap of their result:
 
-![from_research_paper](https://raw.githubusercontent.com/anandborad/MPST/master/images/7_MPST_from_paper.png)
+![from_research_paper](https://raw.githubusercontent.com/anandborad/MPST/master/images/8_MPST_from_paper.png)
 
 Maximum f1-micro they’ve got is 37.8. Let’s see how much we would able to get with a simple model.
 
