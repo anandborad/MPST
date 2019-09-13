@@ -179,32 +179,115 @@ Our problem is a multi-label classification problem where there may be multiple 
 
 F1-Score is derived from recall and precision values. To calculate micro f1 score, we need to calculate micro averaged precision and recall, hence:
 
+```
 Micro F1-score = 2/(micro recall ^-1 + micro precision^-1)
-
+```
 Let’s understand how to calculate micro averaged precision and recall from an example. let’s say for a set of data, the system's
 
+```
 True positive (TP1)= 12
 False positive (FP1)=9
 False negative (FN1)=3
-
+```
 Then precision (P1) and recall (R1) will be 57.14 and 80
 
 and for a different set of data, the system's
 
-
+```
 True positive (TP2)= 50
 False positive (FP2)=23
 False negative (FN2)=9
+```
 
 Then precision (P2) and recall (R2) will be 68.49 and 84.75
 
 Now, the average precision and recall of the system using the Micro-average method is
-
+```
 Micro-average of precision = (TP1+TP2)/(TP1+TP2+FP1+FP2) = (12+50)/(12+50+9+23) = 65.96
 Micro-average of recall = (TP1+TP2)/(TP1+TP2+FN1+FN2) = (12+50)/(12+50+3+9) = 83.78
-
-Above explanation is borrowed from this brilliant blog.
+```
+Above explanation is borrowed from this [brilliant blog](http://rushdishams.blogspot.com/2011/08/micro-and-macro-average-of-precision.html).
 
 One more thing before jumping to modelling.
 
 Let's look into a research paper by dataset publisher which I have already mentioned (a link to paper) in the beginning. They used a micro F1 score along with tag recall and tag learned as evaluation metrics. Below is the snap of their result:
+
+![from_research_paper](https://raw.githubusercontent.com/anandborad/MPST/master/images/7_MPST_from_paper.png)
+
+Maximum f1-micro they’ve got is 37.8. Let’s see how much we would able to get with a simple model.
+
+To solve a multi-label classification problem, we would use OneVsRest classifier which at a time classifies one class iteratively. [Learn more here](https://scikit-learn.org/stable/modules/generated/sklearn.multiclass.OneVsRestClassifier.html). 
+
+I have tried with support vector machine and logistic regression. Logistic regression turns out to be a better option.
+
+```python
+classifier = OneVsRestClassifier(SGDClassifier(loss='log', alpha=1e-5, penalty='l1'), n_jobs=-1)
+classifier.fit(x_train, y_train)
+predictions = classifier.predict(x_test)
+
+print("micro f1 score :",metrics.f1_score(y_test, predictions, average = 'micro'))
+print("hamming loss :",metrics.hamming_loss(y_test,predictions))
+```
+```
+micro f1 score : 0.34867686650469504
+hamming loss : 0.04710189661231041
+```
+We got pretty good micro-f1 (0.349 vs 0.378, best result mentioned in paper) with LR model. 
+
+## The final trick! 
+
+Precision and recall depend upon TP, FP, TN, and FN. All that metrics depends on predictions (0 or 1) but not on the probability of a prediction.
+
+What if we figure out a way to use probability and check whether it improves micro f1 score or not. To do so, we will use the fact that the default threshold for prediction is 0.5. That simply means we assign 1 if prediction probability id 0.5 or above and 0 otherwise.
+
+Here we will try different threshold value to learn a threshold that maximizes the micro-f1 score.
+
+Let's try with 0.20 to 0.30 as threshold values.
+```python
+yhat_val_prob= classifier.predict_proba(x_val)
+for t in list(range(20, 31, 1)):
+ print(t*0.01)
+ pred_lb=np.asarray(yhat_val_prob>t*0.01, dtype='int8')
+ print("micro f1 scoore :",metrics.f1_score(y_val, pred_lb, average = 'micro'))
+```
+```
+0.2
+micro f1 scoore : 0.37533010563380287
+0.21
+micro f1 scoore : 0.3761086785674189
+0.22
+micro f1 scoore : 0.3761457378551788
+0.23
+micro f1 scoore : 0.37720425084666587
+0.24
+micro f1 scoore : 0.3766496254904292
+0.25
+micro f1 scoore : 0.3773150950248154
+0.26
+micro f1 scoore : 0.378451509747248
+0.27
+micro f1 scoore : 0.3784528656435954
+0.28
+micro f1 scoore : 0.37878787878787873
+0.29
+micro f1 scoore : 0.377741831122614
+0.3
+micro f1 scoore : 0.3768382352941177
+```
+From above, we can see that using 0.28 as a threshold value we can get the best micro f1 score around 0.379 on the validation dataset. 
+
+Let's see what result the same threshold can give for test data set.
+```python
+yhat_test_prob= classifier.predict_proba(x_test)
+pred_lb=np.asarray(yhat_test_prob>0.28, dtype='int8')
+
+print("micro f1 score :",metrics.f1_score(y_test, pred_lb, average = 'micro'))
+print("hamming loss :",metrics.hamming_loss(y_test,pred_lb))
+```
+```
+micro f1 score : 0.3737731458059294
+hamming loss : 0.05899764066633302
+```
+Here, we improved result on test data from 0.349 to 0.374 just by adjusting threshold values. 
+
+As mentioned in the paper, we can try with different featurization instead of just 1,2,3-grams TFIDF. Various resources suggest that 3,4-grams character based TFIDF performs better with this dataset. We can definitely extend our experiments with threshold adjustment which gave a better result in our experiment. 
