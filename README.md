@@ -294,3 +294,12 @@ hamming loss : 0.05899764066633302
 Here, we improved result on test data from 0.349 to 0.374 just by adjusting threshold values. 
 
 As mentioned in the paper, we can try with different featurization instead of just 1,2,3-grams TFIDF. Various resources suggest that 3,4-grams character based TFIDF performs better with this dataset. We can definitely extend our experiments with threshold adjustment which gave a better result in our experiment. 
+
+## References
+1. http://ritual.uh.edu/mpst-2018/
+2. https://arxiv.org/pdf/1802.07858.pdf
+3. https://towardsdatascience.com/understanding-feature-engineering-part-3-traditional-methods-for-text-data-f6f7d70acd41
+4. http://rushdishams.blogspot.com/2011/08/micro-and-macro-average-of-precision.html
+5. https://www.analyticsvidhya.com/blog/2017/08/introduction-to-multi-label-classification/
+6. https://appliedaicourse.com
+
